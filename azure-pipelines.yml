@@ -66,6 +66,8 @@ stages:
         artifact: drop
 
 - stage: Deploy
+  variables:
+  - group: SubscriptionInfo
   displayName: Deploy to staging
   jobs:
     - job: 
@@ -81,7 +83,7 @@ stages:
           ConnectionType: 'AzureRM'
           azureSubscription: 'gdardia-airs-subscription (e50784e7-b1b9-47a4-b098-654662e73f01)'
           appType: 'webAppLinux'
-          WebAppName: 'python-flask-webapp'
+          WebAppName: '$(webappname)'
           deployToSlotOrASE: true
           ResourceGroupName: 'devops'
           SlotName: 'staging'
