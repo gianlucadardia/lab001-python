@@ -70,6 +70,11 @@ stages:
   jobs:
     - job: 
       steps:
+      - task: DownloadBuildArtifacts@1
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          downloadPath: '$(System.ArtifactsDirectory)'
       - task: AzureRmWebAppDeployment@4
         displayName: 'Publish application'
         inputs:
@@ -80,6 +85,6 @@ stages:
           deployToSlotOrASE: true
           ResourceGroupName: 'devops'
           SlotName: 'staging'
-          packageForLinux: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+          packageForLinux: $(System.ArtifactsDirectory)/$(Build.BuildId).zip
           RuntimeStack: 'PYTHON|3.7'
           StartupCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
