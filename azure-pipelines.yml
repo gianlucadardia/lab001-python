@@ -64,20 +64,22 @@ stages:
       - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
         displayName: 'Upload package'
         artifact: drop
-      
+
 - stage: Deploy
-  displayName: Deploy on staging slot
+  displayName: Deploy to staging
   jobs:
     - job: 
       steps:
       - task: AzureRmWebAppDeployment@4
-        displayName: 'Deploy Azure App Service on staging slot'
+        displayName: 'Publish application'
         inputs:
-          azureSubscription: '$(Parameters.ConnectedServiceName)'
-          appType: '$(Parameters.WebAppKind)'
-          WebAppName: '$(Parameters.WebAppName)'
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'gdardia-airs-subscription (e50784e7-b1b9-47a4-b098-654662e73f01)'
+          appType: 'webAppLinux'
+          WebAppName: 'python-flask-webapp'
           deployToSlotOrASE: true
-          ResourceGroupName: devops
-          SlotName: staging
+          ResourceGroupName: 'devops'
+          SlotName: 'staging'
+          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
           RuntimeStack: 'PYTHON|3.7'
-          StartupCommand: '$(Parameters.StartupCommand)'
+          StartupCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
